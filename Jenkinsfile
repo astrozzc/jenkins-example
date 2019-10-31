@@ -8,13 +8,21 @@ pipeline {
                     sh "oc login https://api.insights-dev.openshift.com --token=${TOKEN}"
                 }
 
-                sh "oc project rbac-ci"
+                script {
+                    if (GIT_BRANCH == 'origin/master') {
+                        sh "oc project rbac-ci"
+                    }
+                    if (GIT_BRANCH == 'origin/stable') {
+                        sh "oc project rbac-qa"
+                    }
+                } 
+
             }
         }   
 
         stage('Create ConfigMap') {
             steps {
-                sh "oc create configmap test-config --from-file=configs --dry-run -o json | oc apply -f -"
+                sh "oc create configmap rbac-config --from-file=configs --dry-run -o json | oc apply -f -"
             }
         }   
     }
