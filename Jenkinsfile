@@ -1,32 +1,15 @@
 pipeline {
     agent any
 
-    stages {
-        stage ('Compile Stage') {
-
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn clean compile'
-                }
-            }
+    stage('Login as deployer account') {
+        withCredentials([string(credentialsId: 'HccmRbacDevDeployerToken', variable: 'TOKEN')]) {
+            sh "oc login https://api.insights-dev.openshift.com --token=${TOKEN}"
         }
 
-        stage ('Testing Stage') {
+        sh "oc project rbac-ci"
+    }
 
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn test'
-                }
-            }
-        }
-
-
-        stage ('Deployment Stage') {
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn deploy'
-                }
-            }
-        }
+    stage('Create ConfigMap') {
+        sh "oc create configmap test-config --from-file=."
     }
 }
