@@ -10,11 +10,12 @@ pipeline {
 
                 sh "oc project rbac-ci"
             }
-
         }   
 
         stage('Create ConfigMap') {
-            sh "oc create configmap test-config --from-file=."
+            steps {
+                sh "oc create configmap test-config --from-file=configs --dry-run -o json | oc apply -f -"
+            }
         }   
     }
 
