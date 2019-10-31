@@ -8,6 +8,7 @@ pipeline {
                     sh "oc login https://api.insights-dev.openshift.com --token=${TOKEN}"
                 }
 
+                echo GIT_BRANCH
                 sh "oc project rbac-ci"
             }
         }   
