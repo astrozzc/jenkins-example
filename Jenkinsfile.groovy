@@ -14,7 +14,8 @@ node {
         dir(bop_dir) {
             git branch: bop_branch, url: 'https://github.com/astrozzc/jenkins-example.git'
         }
-        return sh(script: "git --git-dir=${project_dir}/.git tag --points-at HEAD", returnStdout: true)
+        def gitTag = sh(script: "git --git-dir=${bop_dir}/.git tag --points-at HEAD", returnStdout: true)
+        return "${gitTag}${env.BUILD_NUMBER}"
     }
 
     if (!tagging) {
